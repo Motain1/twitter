@@ -1,5 +1,4 @@
 import React from 'react'
-// Import Icons
 import {
   BellIcon,
   HashtagIcon,
@@ -8,34 +7,28 @@ import {
   DotsCircleHorizontalIcon,
   MailIcon,
   UserIcon,
-  HomeIcon,
+  HomeIcon
 } from '@heroicons/react/outline'
-// Import Sidebar Row component
-import SidebarRow from './SidebarRow'
-import { useSession, signOut, signIn } from 'next-auth/react'
+import SideBarRow from './SidebarRow'
+import { signIn, signOut, useSession } from 'next-auth/react'
 
-function Sidebar() {
-  const {data: session } = useSession()
 
+function SideBar() {
+  const {data:session} = useSession();
   return (
-    <div className='flex flex-col col-span-2 items-center px-4 md:items-start'>
-      {/* Twitter Logo */}
-      <img
-        className="m-3 h-10 w-10"
-        src="https://links.papareact.com/drq"
-        alt="Twitter Logo"
-      />
-      {/* icon's and title */}
-      <SidebarRow Icon={HomeIcon} title="Home" />
-      <SidebarRow Icon={HashtagIcon} title="Explore" /> 
-      <SidebarRow Icon={BellIcon} title="Notifications" />
-      <SidebarRow Icon={MailIcon} title="Massages" />
-      <SidebarRow Icon={BookmarkIcon} title="Bookmarks" />
-      <SidebarRow Icon={CollectionIcon} title="Lists" />
-      <SidebarRow onClick={session? signOut : signIn  } Icon={UserIcon} title={session? 'Sign Out': 'Sign In' } />
-      <SidebarRow Icon={DotsCircleHorizontalIcon} title="More" />
+    <div className='flex flex-col col-span-2 items-center px-4 md:items-start' >
+      <img className='m-3 h-10 w-10' alt='twitter' src="https://links.papareact.com/drq" />
+      <SideBarRow title="Home" Icon={HomeIcon} />
+      <SideBarRow title="Explore" Icon={HashtagIcon} />
+      <SideBarRow title="Notifications" Icon={BellIcon} />
+      <SideBarRow title="Messages" Icon={MailIcon} />
+      <SideBarRow title="Bookmarks" Icon={BookmarkIcon} />
+      <SideBarRow title="Lists" Icon={CollectionIcon} />
+      <SideBarRow onClick={session? signOut:signIn}  title={session? "Sign Out":"Sign In"} Icon={UserIcon} />
+      <SideBarRow title="More" Icon={DotsCircleHorizontalIcon} />
+    
     </div>
   )
 }
 
-export default Sidebar
+export default SideBar

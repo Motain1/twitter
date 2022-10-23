@@ -17,16 +17,15 @@ export default {
       name: 'profileImg',
       title: 'Profile Image',
       type: 'string',
-      
     },
     {
       name: 'tweet',
       title: 'Tweet',
-      description: 'Reference the Tweet the comment is assoicated to:',
+      description: 'Reference the Tweet with the comment is associated to:',
       type: 'reference',
-      to:{
-        type:'tweet',
-      }
+      to: {
+        type: 'tweet',
+      },
     },
   ],
 }

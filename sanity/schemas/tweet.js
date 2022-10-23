@@ -11,8 +11,8 @@ export default {
     {
       name: 'blockTweet',
       title: 'Block Tweet',
-      desciption: 'ADMIN Controls: Toggle if Tweet is deemed inappropriate',
       type: 'boolean',
+      description: 'ADMIN Controls: Toggle if Tweet is deemed inapproriate',
     },
     {
       name: 'username',
@@ -23,13 +23,11 @@ export default {
       name: 'profileImg',
       title: 'Profile Image',
       type: 'string',
-      
     },
     {
       name: 'image',
       title: 'Tweet image',
       type: 'string',
     },
-    
   ],
 }

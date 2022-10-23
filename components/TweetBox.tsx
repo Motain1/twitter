@@ -1,55 +1,98 @@
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
 import {
   CalendarIcon,
   EmojiHappyIcon,
   LocationMarkerIcon,
   PhotographIcon,
-  SearchCircleIcon,
-} from "@heroicons/react/outline";
-import React, { useState } from "react";
+  SearchCircleIcon
+} from '@heroicons/react/outline'
+import { useSession } from 'next-auth/react';
+import { Tweet, TweetBody } from '../typings';
+import { fetchTweets } from '../utils/fetchTweets';
+import toast from 'react-hot-toast';
 
-function TweetBox() {
-  // State's
+interface Props {
+  setTweets: Dispatch<React.SetStateAction<Tweet[]>>
+}
+
+const TweetBox = ({ setTweets }: Props) => {
   const [input, setInput] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+  const { data: session } = useSession();
+  const [imageUrlisOpen, setImageUrlIsOpen] = useState<boolean>(false)
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const addImageToTweet = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    if (!imageInputRef.current?.value) return
+    setImage(imageInputRef.current.value)
+    imageInputRef.current.value = ''
+    setImageUrlIsOpen(false);
+  }
+
+  const postTweet = async () => {
+    const tweetInfo: TweetBody = {
+      text: input,
+      username: session?.user?.name || 'Unknown User',
+      profileImg: session?.user?.image || 'https://links.papareact.com/gll',
+      image: image
+    }
+    const result = await fetch(`/api/addTweet`, {
+      body: JSON.stringify(tweetInfo),
+      method: 'POST'
+    })
+    const json = await result.json();
+
+    const newTweets = await fetchTweets();
+    setTweets(newTweets)
+    toast('Tweet Posted', {
+      icon: '🚀'
+    })
+    return json
+  }
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    postTweet()
+    setInput('')
+    setImage('')
+    setImageUrlIsOpen(false)
+  }
 
   return (
-    <div className="flex space-x-2 p-5">
-      {/* User Image */}
-      <img
-        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0f3fce68-0f4e-4799-b91d-c736173f8165/dafjzz0-80013ab1-87de-4563-bf22-d555465f7ead.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBmM2ZjZTY4LTBmNGUtNDc5OS1iOTFkLWM3MzYxNzNmODE2NVwvZGFmanp6MC04MDAxM2FiMS04N2RlLTQ1NjMtYmYyMi1kNTU1NDY1ZjdlYWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mQCmWiLtCoRXt2rznu35pAZiGSg_Rh57pYu-QdIXqKA"
-        alt="user"
-        className="mt-4 h-14 w-14 rounded-full object-cover "
-      />
-      {/* Tweet box section */}
-      <div className="flex flex-1 items-center pl-2">
-        <form className="flex flex-1 flex-col">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            type="text"
-            placeholder="What's Happening ? "
-            className="h-24 w-full text-xl outline-none placeholder:text-xl"
-          />
-          <div className="flex items-center ">
-            <div className="flex flex-1 space-x-2 text-twitter">
-              {/* Icon's */}
-              <PhotographIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
-              <SearchCircleIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
-              <EmojiHappyIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
-              <CalendarIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
-              <LocationMarkerIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
+    <div className='flex space-x-2 p-5' >
+      <img className='mt-4 h-14 w-14 object-cover rounded-full' src={session?.user?.image || 'https://links.papareact.com/gll'} alt="profile pic" />
+
+      <div className='flex flex-1 items-center pl-2 ' >
+        <form className='flex flex-1 flex-col' >
+          <input value={input} onChange={(e) => { setInput(e.target.value) }} className=" h-24 w-full text-xl outline-none placeholder:text-xl" type="text" placeholder="What's Happening?" />
+          <div className='flex items-center ' >
+
+            <div className='flex-1 flex space-x-2 text-twitter' >
+              <PhotographIcon onClick={() => setImageUrlIsOpen(!imageUrlisOpen)} className='h-5 w-5 cursor-pointer transition-transform ease-out duration-150 hover:scale-150 ' />
+              <SearchCircleIcon className='h-5 w-5' />
+              <EmojiHappyIcon className='h-5 w-5' />
+              <CalendarIcon className='h-5 w-5' />
+              <LocationMarkerIcon className='h-5 w-5' />
             </div>
-            {/* Button for Tweet */}
-            <button
-              disabled={!input}
-              className="rounded-full bg-twitter px-5 py-2 font-bold text-white disabled:opacity-40"
-            >
-              Tweet
-            </button>
+            <button onClick={handleSubmit} disabled={!input || !session} className='disabled:opacity-40 bg-twitter px-5 py-2 font-bold text-white rounded-full' >Tweet</button>
           </div>
+
+          {imageUrlisOpen && (
+            <form className='mt-5 bg-twitter/80 flex rounded-lg py-2 px-4' >
+              <input ref={imageInputRef} placeholder='Enter image Url...' className=' flex-1 p-2 text-white bg-transparent outline-none placeholder:text-white ' type="text" />
+              <button type='submit' onClick={addImageToTweet} className='text-white font-bold' >Add Image</button>
+            </form>
+          )}
+          {
+            image && (
+              <img src={image} className="rounded-xl object-contain mt-10 h-40 shadow-lg w-full" alt="" />
+            )
+          }
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default TweetBox;
+export default TweetBox

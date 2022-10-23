@@ -15,7 +15,7 @@ interface Props {
   tweet: Tweet
 }
 
-const TweetComponent = ({ tweet }: Props) => {
+const Tweet = ({ tweet }: Props) => {
 
   const [comments, setComments] = useState<Comment[]>([])
   const [commentBosVisible, setCommentBoxVisible] = useState<boolean>(false)
@@ -119,4 +119,4 @@ const TweetComponent = ({ tweet }: Props) => {
   )
 }
 
-export default TweetComponent;
+export default Tweet;
