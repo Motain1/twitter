@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "project": {
+    "name": "Twitter-Clone-3.0"
+  },
+  "api": {
+    "projectId": "k5k5tq0x",
+    "dataset": "production"
+  },
+  "plugins": [
+    "@sanity/base",
+    "@sanity/default-layout",
+    "@sanity/default-login",
+    "@sanity/desk-tool"
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "@sanity/vision"
+      ]
+    }
+  },
+  "parts": [
+    {
+      "name": "part:@sanity/base/schema",
+      "path": "./schemas/schema"
+    }
+  ]
+}
